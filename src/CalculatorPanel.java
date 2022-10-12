@@ -6,13 +6,18 @@ import java.util.ArrayList;
 public class CalculatorPanel extends JPanel {
 
     final static private String DIGITS = "1234567890";      // IS IT OKAY to include ZERO?
+    // Code above replaced concept below
+    // final static ArrayList<String> UNARY_OPS = new ArrayList<>();
 
-    //final static ArrayList<String> UNARY_OPS = new ArrayList<>();
+    private int parenCount;
+    private int curlyCount;
 
-    private int openParen;
-    private int closeParen;
-    private int openCurly;
-    private int closeCurly;
+    //private boolean insideCurly, insideParen;     //PROBABLY not necessary
+
+    private enum mostRecentControlSymbol
+    {
+        openParen, closePren, openCurly, closeCurly;
+    }
 
     private String currInput;
 
@@ -337,20 +342,39 @@ public class CalculatorPanel extends JPanel {
         });
 
         openParenButton.addActionListener(e -> {
+            parenCount++;
+            String tempInput = "(";
+            currInput += tempInput;
+            display.setText(currInput);
             // Disable necessary buttons
 
         });
 
         closeParenButton.addActionListener(e -> {
-
+            if (parenCount > 0)
+            {
+                String tempInput = ")";
+                currInput += tempInput;
+                display.setText(currInput);
+                parenCount--;
+            }
         });
 
         openCurlyButton.addActionListener(e -> {
-
+            curlyCount++;
+            String tempInput = "{";
+            currInput += tempInput;
+            display.setText(currInput);
         });
 
         closeCurlyButton.addActionListener(e -> {
-
+            if (curlyCount > 0)
+            {
+                String tempInput = "}";
+                currInput += tempInput;
+                display.setText(currInput);
+                curlyCount--;
+            }
         });
 
         clearButton.addActionListener(e -> {
@@ -440,7 +464,7 @@ public class CalculatorPanel extends JPanel {
         //subtractButton.setEnabled(false);  REMAINS enabled, since (-) is also unary operator
         multiplyButton.setEnabled(false);
         divideButton.setEnabled(false);
-        equalButton.setEnabled(false);
+        equalButton.setEnabled(false);     //IDK if this counts as a binary op??
         expButton.setEnabled(false);
     }
 
