@@ -14,34 +14,16 @@ public class CalculatorPanel extends JPanel {
     private String valuated;
 
     private JTextArea display = new JTextArea("0");
-    private boolean zeroOK; // This is to keep track of whether other digits are allowed after a zero, i.e. after a decimal point
-    private JButton equalButton;
-    private JButton a0Button;
-    private JButton logButton;
-    private JButton cotButton;
-    private JButton a4Button;
-    private JButton divideButton;
-    private JButton subtractButton;
-    private JButton a1Button;
-    private JButton a2Button;
-    private JButton a8Button;
-    private JButton a5Button;
-    private JButton cosButton;
-    private JButton openParenButton;
-    private JButton a7Button;
-    private JButton openCurlyButton;
-    private JButton a3Button;
-    private JButton a6Button;
-    private JButton a9Button;
-    private JButton closeParenButton;
-    private JButton closeCurlyButton;
-    private JButton addButton;
-    private JButton multiplyButton;
-    private JButton sinButton;
-    private JButton tanButton;
-    private JButton lnButton;
-    private JButton expButton;
-    private JButton decimalButton;
+
+    // Keep track of whether other digits are allowed after a zero,
+    // i.e. after a decimal point or within the digits of a larger number
+    private boolean zeroOK;
+    private JButton a1Button, a2Button, a3Button, addButton, subtractButton;
+    private JButton a4Button, a5Button, a6Button, multiplyButton, divideButton;
+    private JButton a7Button, a8Button, a9Button, sinButton, cosButton;
+    private JButton a0Button, openParenButton, closeParenButton, tanButton, cotButton;
+    private JButton equalButton, openCurlyButton, closeCurlyButton, lnButton, logButton;
+    private JButton decimalButton, expButton;
 
     public CalculatorPanel() {
         setLayout(new BorderLayout(2, 2));
@@ -126,7 +108,8 @@ public class CalculatorPanel extends JPanel {
         a1Button.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-
+                String tempInput = "1";
+                display.setText(currInput + tempInput);
             }
         });
         a2Button.addActionListener(new ActionListener() {
@@ -456,7 +439,7 @@ public class CalculatorPanel extends JPanel {
         JFrame.setDefaultLookAndFeelDecorated(false);
         JFrame frame = new JFrame();
         frame.setTitle("Calculator");
-        frame.setSize(300,300);
+        frame.setSize(300,400);
         frame.addWindowListener(new WindowAdapter() {
             public void windowClosing(WindowEvent e) {
                 System.exit(0);
