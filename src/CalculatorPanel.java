@@ -1,36 +1,32 @@
+/*
+// Nicholas Cutlip
+// CS480 Lab #2
+// Prof. Vajda
+ */
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.*;
 
+// A class to create a basic GUI based calculator.
 public class CalculatorPanel extends JPanel {
 
     final static private String DIGITS = "1234567890";      // IS IT OKAY to include ZERO?
+
     final static private String CLOSING_PARENS = ")}";
     final static private String OPENING_PARENS = "({";
-    final static private String BINARY_OPS = "-+*/^=";
-    final static private String[] UNARY_OPS = {"sin(", "cos(", "tan(" , "cot(", "ln(", "log("};
+
+    // Higher indices indicate higher precedence (precedence = index / 2)
     final static private String[] OPS_PRECEDENCE = { "-", "+", "*", "/", "^", "^",
             "sin", "cos", "tan" , "cot", "ln", "log"};
 
-    // Code above replaced concept below
-    // final static ArrayList<String> UNARY_OPS = new ArrayList<>();
-
-    private String lastOpenParen = "";
-    private boolean insideDecimal = false;
-    private int parenCount;
-    private int curlyCount;
-    private enum mostRecentControlSymbol {
-        openParen, closePren, openCurly, closeCurly
-    }
-    // STACK IMPLEMENTATION TO REMEMBER WHAT COMES BEFORE
-    // PUT LEFTS ON STACK, RIGHTS POP THEM
-    private String currInput;
-    private String currExpression;
-
-    // Keep track of whether other digits are allowed after a zero,
-    // i.e. after a decimal point or within the digits of a larger number
-    private boolean zeroOK;
+    private String lastOpenParen = "";          // Tracks which type of paren was last opened, ( or {
+    private boolean insideDecimal = false;      // Prevents use of decimal point inside another decimal point
+    private int parenCount;                     // Prevents incorrect parenthesis input
+    private int curlyCount;                     // Prevents incorrect curly bracket input
+    private String currInput;                   // Holds state of current expression as displayed to user
+    private String currExpression;              // Holds state of current expression as it will be evaluated
 
     // Row 1 buttons
     final private JButton a1Button, a2Button, a3Button, addButton, subtractButton;
@@ -49,9 +45,11 @@ public class CalculatorPanel extends JPanel {
 
     public CalculatorPanel() {
         setLayout(new BorderLayout(10, 10));
-        //this.setBackground(Color.green);
+        setBackground(Color.orange);
 
-        display.setEditable(false);
+        // Configure I/O display area
+        display.setEditable(false);         // Input field cannot be edited by user
+        display.setPreferredSize(new Dimension(800,100));
         currInput = "";
         currExpression = "";
         display.setText(currInput);
@@ -59,84 +57,119 @@ public class CalculatorPanel extends JPanel {
         display.setFont(bigFont);
         add(display, "North");
 
+        // Configure grid of buttons
         JPanel panel = new JPanel();
-        panel.setLayout(new GridLayout(6, 5));
+        panel.setBackground(Color.pink);
+        GridLayout layout = new GridLayout(6, 5);
+        layout.setVgap(5);
+        layout.setHgap(5);
+        panel.setLayout(layout);
+
 
         // Row 1
         a1Button = new JButton("1");
+        a1Button.setFont(bigFont);
         panel.add(a1Button);
         a2Button = new JButton("2");
+        a2Button.setFont(bigFont);
         panel.add(a2Button);
         a3Button = new JButton("3");
+        a3Button.setFont(bigFont);
         panel.add(a3Button);
         addButton = new JButton("+");
+        addButton.setFont(bigFont);
         panel.add(addButton);
         subtractButton = new JButton("-");
+        subtractButton.setFont(bigFont);
         panel.add(subtractButton);
 
         // Row 2
         a4Button = new JButton("4");
+        a4Button.setFont(bigFont);
         panel.add(a4Button);
         a5Button = new JButton("5");
+        a5Button.setFont(bigFont);
         panel.add(a5Button);
         a6Button = new JButton("6");
+        a6Button.setFont(bigFont);
         panel.add(a6Button);
         multiplyButton = new JButton("*");
+        multiplyButton.setFont(bigFont);
         panel.add(multiplyButton);
         divideButton = new JButton("/");
+        divideButton.setFont(bigFont);
         panel.add(divideButton);
 
 
         // Row 3
         a7Button = new JButton("7");
+        a7Button.setFont(bigFont);
         panel.add(a7Button);
         a8Button = new JButton("8");
+        a8Button.setFont(bigFont);
         panel.add(a8Button);
         a9Button = new JButton("9");
+        a9Button.setFont(bigFont);
         panel.add(a9Button);
         sinButton = new JButton("sin");
+        sinButton.setFont(bigFont);
         panel.add(sinButton);
         cosButton = new JButton("cos");
+        cosButton.setFont(bigFont);
         panel.add(cosButton);
 
         // Row 4
         a0Button = new JButton("0");
+        a0Button.setFont(bigFont);
         panel.add(a0Button);
         openParenButton = new JButton("(");
+        openParenButton.setFont(bigFont);
         panel.add(openParenButton);
         closeParenButton = new JButton(")");
+        closeParenButton.setFont(bigFont);
         panel.add(closeParenButton);
         tanButton = new JButton("tan");
+        tanButton.setFont(bigFont);
         panel.add(tanButton);
         cotButton = new JButton("cot");
+        cotButton.setFont(bigFont);
         panel.add(cotButton);
 
         // Row 5
         equalButton = new JButton("=");
+        equalButton.setFont(bigFont);
         panel.add(equalButton);
         openCurlyButton = new JButton("{");
+        openCurlyButton.setFont(bigFont);
         panel.add(openCurlyButton);
         closeCurlyButton = new JButton("}");
+        closeCurlyButton.setFont(bigFont);
         panel.add(closeCurlyButton);
         lnButton = new JButton("ln");
+        lnButton.setFont(bigFont);
         panel.add(lnButton);
         logButton = new JButton("log");
+        logButton.setFont(bigFont);
         panel.add(logButton);
 
         // Row 6
         unaryNegativeButton = new JButton("+/-");
+        unaryNegativeButton.setFont(bigFont);
         panel.add(unaryNegativeButton);
         expButton = new JButton("^");
+        expButton.setFont(bigFont);
         panel.add(expButton);
         decimalButton = new JButton(".");
+        decimalButton.setFont(bigFont);
         panel.add(decimalButton);
         clearButton = new JButton("clear");
+        clearButton.setFont(bigFont);
         panel.add(clearButton);
 
         // Initial button states
         decimalButton.setEnabled(true);
-        enableUnaryOps(true);
-        enableDigits(true);
+        enableUnaryOps();
+        enableDigits();
         equalButton.setEnabled(false);
         enableZero(false);
         enableBinaryOps(false);
@@ -192,12 +225,11 @@ public class CalculatorPanel extends JPanel {
             // Enable necessary buttons
             if (!insideDecimal) decimalButton.setEnabled(true);
             enableBinaryOps(true);
-            enableUnaryOps(true);
+            enableUnaryOps();
             checkLastOpenParen();
             equalButton.setEnabled(parenCount == 0 && curlyCount == 0);
         });
 
-        // Bind setEnabled function to same boolean
         addButton.addActionListener(e -> {
             String tempInput = "+ ";
             currInput += tempInput;
@@ -249,8 +281,6 @@ public class CalculatorPanel extends JPanel {
             a0Button.setEnabled(false);
             equalButton.setEnabled(false);
             enableClose(false);
-
-            // Enable necessary buttons
         });
 
         sinButton.addActionListener(e -> {
@@ -425,7 +455,6 @@ public class CalculatorPanel extends JPanel {
             display.setText(currInput);
 
             // Disable necessary buttons
-            //closeCurlyButton.setEnabled(false);
             enableBinaryOps(false);
             equalButton.setEnabled(false);
             enableZero(false);
@@ -440,7 +469,6 @@ public class CalculatorPanel extends JPanel {
                 display.setText(currInput);
                 parenCount--;
             }
-            //closeCurlyButton.setEnabled(true);
             equalButton.setEnabled(parenCount == 0 && curlyCount == 0);
         });
 
@@ -455,7 +483,6 @@ public class CalculatorPanel extends JPanel {
             display.setText(currInput);
 
             // Disable necessary buttons
-            //closeParenButton.setEnabled(false);
             enableBinaryOps(false);
             equalButton.setEnabled(false);
             enableZero(false);
@@ -481,8 +508,8 @@ public class CalculatorPanel extends JPanel {
 
             // Initial button states
             if (!insideDecimal) decimalButton.setEnabled(true);
-            enableUnaryOps(true);
-            enableDigits(true);
+            enableUnaryOps();
+            enableDigits();
             equalButton.setEnabled(false);
             enableZero(false);
             enableBinaryOps(false);
@@ -493,34 +520,38 @@ public class CalculatorPanel extends JPanel {
             currInput = "";
             currExpression = "";
 
-            // Disable necessary buttons
+            // Initial button states
             decimalButton.setEnabled(true);
-            enableUnaryOps(true);
-            enableDigits(true);
+            enableUnaryOps();
+            enableDigits();
             equalButton.setEnabled(false);
             enableZero(false);
             enableBinaryOps(false);
         });
 
+        // Constrain buttons to center of CalculatorPanel
         add(panel, "Center");
     }
 
     // Evaluate
     private String evaluate() {
-        return evalRPN(infixToPostfix(currExpression));
+        return evalRPN(infixToRPN(currExpression));
     }
     private static String evalRPN(String expr)
     {
-        if (expr.equals("Error: Mismatched parenthesis")) return expr;
         // Function adapted from: https://rosettacode.org/wiki/Parsing/RPN_calculator_algorithm#Java_2
-        LinkedList<Double> stack = new LinkedList<Double>();
-        System.out.println("Input\tOperation\tStack after");
+        // Evaluate a mathematical expression in Reverse Polish Notation (postfix)
+
+        if (expr.equals("Error: Mismatched parenthesis")) return expr;
+        LinkedList<Double> stack = new LinkedList<>();
+
+        // Split postfix expression into tokens based on delimiting whitespace
         for (String token : expr.split("\\s")){
             System.out.print(token + "\t");
             switch (token) {
+
                 // Binary Operators
                 case "*" -> {
-                    System.out.print("Operate\t\t");
                     double secondOperand = stack.pop();
                     if (stack.isEmpty()) return "Error: Missing multiplication operand";
                     double firstOperand = stack.pop();
@@ -528,7 +559,6 @@ public class CalculatorPanel extends JPanel {
                     break;
                 }
                 case "/" -> {
-                    System.out.print("Operate\t\t");
                     double secondOperand = stack.pop();
                     if (stack.isEmpty()) return "Error: Missing division operand";
                     double firstOperand = stack.pop();
@@ -539,7 +569,6 @@ public class CalculatorPanel extends JPanel {
                     break;
                 }
                 case "-" -> {
-                    System.out.print("Operate\t\t");
                     double secondOperand = stack.pop();
                     if (stack.isEmpty()) return "Error: Missing subtraction operand";
                     double firstOperand = stack.pop();
@@ -547,7 +576,6 @@ public class CalculatorPanel extends JPanel {
                     break;
                 }
                 case "+" -> {
-                    System.out.print("Operate\t\t");
                     double secondOperand = stack.pop();
                     if (stack.isEmpty()) return "Error: Missing addition operand";
                     double firstOperand = stack.pop();
@@ -555,13 +583,13 @@ public class CalculatorPanel extends JPanel {
                     break;
                 }
                 case "^" -> {
-                    System.out.print("Operate\t\t");
                     double secondOperand = stack.pop();
                     if (stack.isEmpty()) return "Error: Missing exponent";
                     double firstOperand = stack.pop();
                     stack.push(Math.pow(firstOperand, secondOperand));
                     break;
                 }
+
                 //Unary Operators
                 case "sin" -> {
                     if (stack.isEmpty()) return "Error: Incorrect sin expression";
@@ -602,9 +630,9 @@ public class CalculatorPanel extends JPanel {
                     }
                     stack.push(Math.log(operand));
                 }
+
                 // Digits
                 default -> {
-                    System.out.print("Push\t\t");
                     try {
                         stack.push(Double.parseDouble(token + ""));
                     } catch (NumberFormatException e) {
@@ -612,36 +640,39 @@ public class CalculatorPanel extends JPanel {
                     }
                 }
             }
-            System.out.println(stack);
         }
         if (stack.size() > 1) {
-            return "Error, too many operands.";
+            return "Error: too many operands.";
         }
-        return "" + stack.pop();
+
+        double result = stack.pop();
+        // Check for double overflow
+        if (result == Double.POSITIVE_INFINITY || result == Double.NEGATIVE_INFINITY)
+            return result + "\nError: Loss of precision due to double overflow.";
+        return "" + result;
     }
-    static String infixToPostfix(String infix)
+    static String infixToRPN(String infix)
     {
         // Function adapted from: https://rosettacode.org/wiki/Parsing/Shunting-yard_algorithm#Java
-        /* To find out the precedence, we take the index of the
-           token in the ops string and divide by 2 (rounding down).
-           This will give us: 0, 0, 1, 1, 2 */
+        // Convert infix mathematical expression to Reverse Polish Notation (postfix)
 
         ArrayList<String> opsPrecedence = new ArrayList<>(Arrays.asList(OPS_PRECEDENCE));
         StringBuilder postfix = new StringBuilder();
         Stack<Integer> s = new Stack<>();
 
+        // Split infix expression into tokens based on delimiting whitespace
         for (String token : infix.split("\\s")) {
             if (token.isEmpty())
                 continue;
             int idx = opsPrecedence.indexOf(token);
 
-            // check for operator
+            // Check if the current token is an operator
             if (idx != -1) {
-                if (s.isEmpty())
-                    s.push(idx);
-
+                if (s.isEmpty()) s.push(idx);
                 else {
                     while (!s.isEmpty()) {
+                        // If current token's precedence is lower than the operator on top of the stack,
+                        // pop the top of the stack and append to result
                         int prec2 = s.peek() / 2;
                         int prec1 = idx / 2;
                         if (prec2 > prec1 || (prec2 == prec1 && !token.equals("^"))) {
@@ -660,7 +691,7 @@ public class CalculatorPanel extends JPanel {
                 s.push(-4); // -4 stands for '{'
             }
             else if (token.equals(")")) {
-                // until '(' on stack, pop operators.
+                // Until '(' on stack, pop operators.
                 while (s.peek() != -2) {
                     if (s.peek() == -4) return "Error: Mismatched parenthesis";
                     postfix.append(opsPrecedence.get(s.pop())).append(" ");
@@ -668,7 +699,7 @@ public class CalculatorPanel extends JPanel {
                 s.pop();
             }
             else if (token.equals("}")) {
-                // until '(' on stack, pop operators.
+                // Until '(' on stack, pop operators.
                 while (s.peek() != -4) {
                     if (s.peek() == -2) return "Error: Mismatched parenthesis";
                     postfix.append(opsPrecedence.get(s.pop())).append(" ");
@@ -679,7 +710,7 @@ public class CalculatorPanel extends JPanel {
                 postfix.append(token).append(' ');
             }
         }
-        while (!s.isEmpty())
+        while (!s.isEmpty())        // Empty out the stack
             postfix.append(opsPrecedence.get(s.pop())).append(' ');
         return postfix.toString();
     }
@@ -699,7 +730,7 @@ public class CalculatorPanel extends JPanel {
         equalButton.setEnabled(parenCount == 0 && curlyCount == 0);
         if (!insideDecimal) decimalButton.setEnabled(true);
         enableBinaryOps(true);
-        enableUnaryOps(true);
+        enableUnaryOps();
         checkLastOpenParen();
     }
     private void checkLastOpenParen()
@@ -771,28 +802,28 @@ public class CalculatorPanel extends JPanel {
         a0Button.setEnabled(enabled);
     }
 
-    private void enableDigits(boolean enabled)
+    private void enableDigits()
     {
-        a1Button.setEnabled(enabled);
-        a2Button.setEnabled(enabled);
-        a3Button.setEnabled(enabled);
-        a4Button.setEnabled(enabled);
-        a5Button.setEnabled(enabled);
-        a6Button.setEnabled(enabled);
-        a7Button.setEnabled(enabled);
-        a8Button.setEnabled(enabled);
-        a9Button.setEnabled(enabled);
+        a1Button.setEnabled(true);
+        a2Button.setEnabled(true);
+        a3Button.setEnabled(true);
+        a4Button.setEnabled(true);
+        a5Button.setEnabled(true);
+        a6Button.setEnabled(true);
+        a7Button.setEnabled(true);
+        a8Button.setEnabled(true);
+        a9Button.setEnabled(true);
     }
 
-    private void enableUnaryOps(boolean enabled)
+    private void enableUnaryOps()
     {
-        sinButton.setEnabled(enabled);
-        cosButton.setEnabled(enabled);
-        tanButton.setEnabled(enabled);
-        cotButton.setEnabled(enabled);
-        lnButton.setEnabled(enabled);
-        logButton.setEnabled(enabled);
-        subtractButton.setEnabled(enabled);
+        sinButton.setEnabled(true);
+        cosButton.setEnabled(true);
+        tanButton.setEnabled(true);
+        cotButton.setEnabled(true);
+        lnButton.setEnabled(true);
+        logButton.setEnabled(true);
+        subtractButton.setEnabled(true);
     }
 
     private void enableBinaryOps(Boolean enabled)
@@ -817,7 +848,7 @@ public class CalculatorPanel extends JPanel {
     public static void main(String[] args) {
         JFrame.setDefaultLookAndFeelDecorated(false);
         JFrame frame = new JFrame();
-        frame.setTitle("Calculator");
+        frame.setTitle("My Calculator!");
         frame.setSize(800,500);
         frame.addWindowListener(new WindowAdapter() {
             public void windowClosing(WindowEvent e) {
