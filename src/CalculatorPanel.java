@@ -40,7 +40,7 @@ public class CalculatorPanel extends JPanel {
     // Row 5 Buttons
     final private JButton equalButton, openCurlyButton, closeCurlyButton, lnButton, logButton;
     // Row 6 buttons
-    final private JButton decimalButton, expButton, clearButton, backspaceButton;
+    final private JButton unaryNegativeButton, decimalButton, expButton, clearButton;
     // Text I/O area
     private final JTextArea display = new JTextArea("0");
 
@@ -50,6 +50,7 @@ public class CalculatorPanel extends JPanel {
 
         display.setEditable(false);
         currInput = "";
+        currExpression = "";
         display.setText(currInput);
         Font bigFont = display.getFont().deriveFont(Font.PLAIN, 25f);
         display.setFont(bigFont);
@@ -120,212 +121,241 @@ public class CalculatorPanel extends JPanel {
         panel.add(logButton);
 
         // Row 6
+        unaryNegativeButton = new JButton("+/-");
+        panel.add(unaryNegativeButton);
         expButton = new JButton("^");
         panel.add(expButton);
         decimalButton = new JButton(".");
         panel.add(decimalButton);
         clearButton = new JButton("clear");
         panel.add(clearButton);
-        backspaceButton = new JButton("back");
 
         // Initial button states
         enableDecimal();
         enableUnaryOps(true);
         enableDigits(true);
-
+        equalButton.setEnabled(false);
         enableZero(false);
-        disableBinaryOps();
+        enableBinaryOps(false);
 
         a1Button.addActionListener(e -> {
-            // If last button pressed was a digit, delete preceding whitespace
-            deletePostDigitWS();
-
             // If last button pressed was closing paren
             insertPostCloseMult();
+
+            // If last button pressed was a digit, delete preceding whitespace
+            deletePostDigitWS();
 
             // Concatenate symbol to curr input and print on display
             String tempInput = "1 ";
             currInput += tempInput;
+            currExpression += tempInput;
             display.setText(currInput);
 
             // Enable necessary buttons
             enableZero(true);
+            equalButton.setEnabled(true);
             enableDecimal();        // IS THIS ever disabled?
-            enableBinaryOps();
+            enableBinaryOps(true);
             enableUnaryOps(true);       // are these ever disabled??
-            enableClose(true);
+            //enableClose(true);
         });
 
         a2Button.addActionListener(e -> {
-            deletePostDigitWS();
             insertPostCloseMult();
+            deletePostDigitWS();
             String tempInput = "2 ";
             currInput += tempInput;
+            currExpression += tempInput;
             display.setText(currInput);
 
             // Enable necessary buttons
             enableZero(true);
+            equalButton.setEnabled(true);
             enableDecimal();        // IS THIS ever disabled?
-            enableBinaryOps();
+            enableBinaryOps(true);
             enableUnaryOps(true);       // are these ever disabled??
-            enableClose(true);
+            //enableClose(true);
         });
 
         a3Button.addActionListener(e -> {
-            deletePostDigitWS();
             insertPostCloseMult();
+            deletePostDigitWS();
             String tempInput = "3 ";
             currInput += tempInput;
+            currExpression += tempInput;
             display.setText(currInput);
 
             // Enable necessary buttons
             enableZero(true);
+            equalButton.setEnabled(true);
             enableDecimal();        // IS THIS ever disabled?
-            enableBinaryOps();
+            enableBinaryOps(true);
             enableUnaryOps(true);       // are these ever disabled??
-            enableClose(true);
+            //enableClose(true);
         });
 
         a4Button.addActionListener(e -> {
-            deletePostDigitWS();
             insertPostCloseMult();
+            deletePostDigitWS();
             String tempInput = "4 ";
             currInput += tempInput;
+            currExpression += tempInput;
             display.setText(currInput);
 
             // Enable necessary buttons
             enableZero(true);
+            equalButton.setEnabled(true);
             enableDecimal();        // IS THIS ever disabled?
-            enableBinaryOps();
+            enableBinaryOps(true);
             enableUnaryOps(true);       // are these ever disabled??
-            enableClose(true);
+            //enableClose(true);
         });
 
         a5Button.addActionListener(e -> {
-            deletePostDigitWS();
             insertPostCloseMult();
+            deletePostDigitWS();
             String tempInput = "5 ";
             currInput += tempInput;
+            currExpression += tempInput;
             display.setText(currInput);
 
             // Enable necessary buttons
             enableZero(true);
+            equalButton.setEnabled(parenCount == 0 && curlyCount == 0);
             enableDecimal();        // IS THIS ever disabled?
-            enableBinaryOps();
+            enableBinaryOps(true);
             enableUnaryOps(true);       // are these ever disabled??
-            enableClose(true);
+            //enableClose(true);
         });
 
         a6Button.addActionListener(e -> {
-            deletePostDigitWS();
             insertPostCloseMult();
+            deletePostDigitWS();
             String tempInput = "6 ";
             currInput += tempInput;
+            currExpression += tempInput;
             display.setText(currInput);
 
             // Enable necessary buttons
             enableZero(true);
+            equalButton.setEnabled(parenCount == 0 && curlyCount == 0);
             enableDecimal();        // IS THIS ever disabled?
-            enableBinaryOps();
+            enableBinaryOps(true);
             enableUnaryOps(true);       // are these ever disabled??
-            enableClose(true);
+            //enableClose(true);
         });
 
         a7Button.addActionListener(e -> {
-            deletePostDigitWS();
             insertPostCloseMult();
+            deletePostDigitWS();
             String tempInput = "7 ";
             currInput += tempInput;
+            currExpression += tempInput;
             display.setText(currInput);
 
             // Enable necessary buttons
             enableZero(true);
+            equalButton.setEnabled(parenCount == 0 && curlyCount == 0);
             enableDecimal();        // IS THIS ever disabled?
-            enableBinaryOps();
+            enableBinaryOps(true);
             enableUnaryOps(true);       // are these ever disabled??
-            enableClose(true);
+            //enableClose(true);
         });
 
         a8Button.addActionListener(e -> {
-            deletePostDigitWS();
             insertPostCloseMult();
+            deletePostDigitWS();
             String tempInput = "8 ";
             currInput += tempInput;
+            currExpression += tempInput;
             display.setText(currInput);
 
             // Enable necessary buttons
             enableZero(true);
+            equalButton.setEnabled(parenCount == 0 && curlyCount == 0);
             enableDecimal();
-            enableBinaryOps();
+            enableBinaryOps(true);
             enableUnaryOps(true);       // are these ever disabled??
-            enableClose(true);
+            //enableClose(true);
         });
 
         a9Button.addActionListener(e -> {
-            deletePostDigitWS();
             insertPostCloseMult();
+            deletePostDigitWS();
             String tempInput = "9 ";
             currInput += tempInput;
+            currExpression += tempInput;
             display.setText(currInput);
 
             // Enable necessary buttons
             enableZero(true);
+            equalButton.setEnabled(parenCount == 0 && curlyCount == 0);
             enableDecimal();        // IS THIS ever disabled?
-            enableBinaryOps();
+            enableBinaryOps(true);
             enableUnaryOps(true);       // are these ever disabled??
-            enableClose(true);
+            //enableClose(true);
         });
 
         a0Button.addActionListener(e -> {
-            deletePostDigitWS();
             insertPostCloseMult();
+            deletePostDigitWS();
             String tempInput = "0 ";
             currInput += tempInput;
+            currExpression += tempInput;
             display.setText(currInput);
 
             // Enable necessary buttons
-            enableClose(true);
+            //enableClose(true);
+            equalButton.setEnabled(parenCount == 0 && curlyCount == 0);
         });
 
         // Bind setEnabled function to same boolean
         addButton.addActionListener(e -> {
             String tempInput = "+ ";
             currInput += tempInput;
+            currExpression += tempInput;
             display.setText(currInput);
 
             // Disable necessary buttons
-            disableBinaryOps();
+            enableBinaryOps(false);
+            equalButton.setEnabled(false);
             enableClose(false);
         });
 
         subtractButton.addActionListener(e -> {
             String tempInput = "- ";
             currInput += tempInput;
+            currExpression += tempInput;
             display.setText(currInput);
 
             // Disable necessary buttons
-            disableBinaryOps();
+            enableBinaryOps(false);
+            equalButton.setEnabled(false);
             enableClose(false);
         });
 
         multiplyButton.addActionListener(e -> {
             String tempInput = "* ";
             currInput += tempInput;
+            currExpression += tempInput;
             display.setText(currInput);
 
             // Disable necessary buttons
-            disableBinaryOps();
+            enableBinaryOps(false);
+            equalButton.setEnabled(false);
             enableClose(false);
         });
 
         divideButton.addActionListener(e -> {
             String tempInput = "/ ";
             currInput += tempInput;
+            currExpression += tempInput;
             display.setText(currInput);
 
             // Disable necessary buttons
-            disableBinaryOps();
+            enableBinaryOps(false);
             a0Button.setEnabled(false);
+            equalButton.setEnabled(false);
             enableClose(false);
 
             // Enable necessary buttons
@@ -333,77 +363,112 @@ public class CalculatorPanel extends JPanel {
 
         sinButton.addActionListener(e -> {
             insertPostCloseMult();
+            insertPostDigitMult();
             String tempInput = "sin ( ";
             parenCount++;
             currInput += tempInput;
+            currExpression += tempInput;
             display.setText(currInput);
 
             // Disable necessary buttons
-            disableBinaryOps();
+            enableBinaryOps(false);
+            equalButton.setEnabled(false);
             enableClose(true);
         });
 
         cosButton.addActionListener(e -> {
             insertPostCloseMult();
+            insertPostDigitMult();
             String tempInput = "cos ( ";
             parenCount++;
             currInput += tempInput;
+            currExpression += tempInput;
             display.setText(currInput);
 
             // Disable necessary buttons
-            disableBinaryOps();
+            enableBinaryOps(false);
+            equalButton.setEnabled(false);
             enableClose(true);
         });
 
         tanButton.addActionListener(e -> {
             insertPostCloseMult();
+            insertPostDigitMult();
             String tempInput = "tan ( ";
             parenCount++;
             currInput += tempInput;
+            currExpression += tempInput;
             display.setText(currInput);
 
             // Disable necessary buttons
-            disableBinaryOps();
+            enableBinaryOps(false);
             closeParenButton.setEnabled(false);
+            equalButton.setEnabled(false);
             closeCurlyButton.setEnabled(false);
         });
 
         cotButton.addActionListener(e -> {
             insertPostCloseMult();
+            insertPostDigitMult();
             String tempInput = "cot ( ";
             parenCount++;
             currInput += tempInput;
+            currExpression += tempInput;
             display.setText(currInput);
 
             // Disable necessary buttons
-            disableBinaryOps();
+            enableBinaryOps(false);
             a0Button.setEnabled(false);
+            equalButton.setEnabled(false);
             enableClose(true);
         });
 
         lnButton.addActionListener(e -> {
             insertPostCloseMult();
+            insertPostDigitMult();
             String tempInput = "ln ( ";
             parenCount++;
             currInput += tempInput;
+            currExpression += tempInput;
             display.setText(currInput);
 
             // Disable necessary buttons
-            disableBinaryOps();
+            enableBinaryOps(false);
             a0Button.setEnabled(false);
+            equalButton.setEnabled(false);
             enableClose(true);
         });
 
         logButton.addActionListener(e -> {
             insertPostCloseMult();
+            insertPostDigitMult();
             String tempInput = "log ( ";
             parenCount++;
             currInput += tempInput;
+            currExpression += tempInput;
             display.setText(currInput);
 
             // Disable necessary buttons
-            disableBinaryOps();
+            enableBinaryOps(false);
             a0Button.setEnabled(false);
+            equalButton.setEnabled(false);
+            enableClose(false);
+        });
+
+        unaryNegativeButton.addActionListener(e -> {
+            if (!currInput.equals("") &&
+                    CLOSING_PARENS.contains(currInput.substring(currInput.length() - 2, currInput.length() - 1))) {
+                // Insert multiplication operator
+                currExpression += "* ";
+            }
+            String tempInput = "- ";
+            currInput += tempInput;
+            currExpression += "( 0 - 1 ) * ";
+            display.setText(currInput);
+
+            // Disable necessary buttons
+            enableBinaryOps(false);
+            equalButton.setEnabled(false);
             enableClose(false);
         });
 
@@ -411,11 +476,13 @@ public class CalculatorPanel extends JPanel {
             String tempInput = "^ ( ";
             parenCount++;
             currInput += tempInput;
+            currExpression += tempInput;
             display.setText(currInput);
 
             // Disable necessary buttons
-            disableBinaryOps();
+            enableBinaryOps(false);
             enableClose(false);
+            equalButton.setEnabled(false);
         });
 
         decimalButton.addActionListener(e -> {
@@ -428,11 +495,13 @@ public class CalculatorPanel extends JPanel {
             }
             insertPostCloseMult();              // IS THIS OKAY?!?
             currInput += tempInput;
+            currExpression += tempInput;
             display.setText(currInput);
 
             // Disable necessary buttons
             disableDecimal();
-            disableBinaryOps();
+            enableBinaryOps(false);
+            equalButton.setEnabled(false);
             enableClose(false);
         });
 
@@ -442,21 +511,27 @@ public class CalculatorPanel extends JPanel {
             parenCount++;
             String tempInput = "( ";
             currInput += tempInput;
+            currExpression += tempInput;
             display.setText(currInput);
 
             // Disable necessary buttons
-            disableBinaryOps();
+            closeCurlyButton.setEnabled(false);
+            enableBinaryOps(false);
+            equalButton.setEnabled(false);
             enableZero(false);
             enableClose(true);
         });
 
         closeParenButton.addActionListener(e -> {
-            if (parenCount > 0 && !deletePostOpenClose()) {
+            deletePostOpenClose();
+            if (parenCount > 0) {
                 String tempInput = ") ";
                 currInput += tempInput;
+                currExpression += tempInput;
                 display.setText(currInput);
                 parenCount--;
             }
+            closeCurlyButton.setEnabled(true);
             equalButton.setEnabled(parenCount == 0 && curlyCount == 0);
         });
 
@@ -466,35 +541,42 @@ public class CalculatorPanel extends JPanel {
             curlyCount++;
             String tempInput = "{ ";
             currInput += tempInput;
+            currExpression += tempInput;
             display.setText(currInput);
 
             // Disable necessary buttons
-            disableBinaryOps();
+            closeParenButton.setEnabled(false);
+            enableBinaryOps(false);
+            equalButton.setEnabled(false);
             enableZero(false);
             enableClose(true);
         });
 
         closeCurlyButton.addActionListener(e -> {
-            if (curlyCount > 0 && !deletePostOpenClose()) {
+            deletePostOpenClose();
+            if  (curlyCount > 0) {
                 String tempInput = "} ";
                 currInput += tempInput;
+                currExpression += tempInput;
                 display.setText(currInput);
                 curlyCount--;
             }
+            closeParenButton.setEnabled(true);
             equalButton.setEnabled(curlyCount == 0 && parenCount == 0);
         });
 
         clearButton.addActionListener(e -> {
             currInput = "";
+            currExpression = "";
             display.setText(currInput);
 
             // Initial button states
             enableDecimal();
             enableUnaryOps(true);
             enableDigits(true);
-
+            equalButton.setEnabled(false);
             enableZero(false);
-            disableBinaryOps();
+            enableBinaryOps(false);
         });
 
         // Backspace button???
@@ -502,14 +584,15 @@ public class CalculatorPanel extends JPanel {
         equalButton.addActionListener(e -> {
             display.setText(evaluate());
             currInput = "";
+            currExpression = "";
 
             // Disable necessary buttons
             enableDecimal();
             enableUnaryOps(true);
             enableDigits(true);
-
+            equalButton.setEnabled(false);
             enableZero(false);
-            disableBinaryOps();
+            enableBinaryOps(false);
         });
 
         add(panel, "Center");
@@ -517,7 +600,7 @@ public class CalculatorPanel extends JPanel {
 
     // Evaluate
     private String evaluate() {
-        return evalRPN(infixToPostfix(currInput));
+        return evalRPN(infixToPostfix(currExpression));
     }
     private static String evalRPN(String expr){
         // Function adapted from: https://rosettacode.org/wiki/Parsing/RPN_calculator_algorithm#Java_2
@@ -538,6 +621,7 @@ public class CalculatorPanel extends JPanel {
                     System.out.print("Operate\t\t");
                     double secondOperand = stack.pop();
                     double firstOperand = stack.pop();
+                    //if ()
                     stack.push(firstOperand / secondOperand);
                     break;
                 }
@@ -605,7 +689,8 @@ public class CalculatorPanel extends JPanel {
         }
         return "" + stack.pop();
     }
-    static String infixToPostfix(String infix) {
+    static String infixToPostfix(String infix)
+    {
         // Function adapted from: https://rosettacode.org/wiki/Parsing/Shunting-yard_algorithm#Java
         /* To find out the precedence, we take the index of the
            token in the ops string and divide by 2 (rounding down).
@@ -641,9 +726,18 @@ public class CalculatorPanel extends JPanel {
             else if (token.equals("(")) {
                 s.push(-2); // -2 stands for '('
             }
+            else if (token.equals("{")) {
+                s.push(-4); // -4 stands for '{'
+            }
             else if (token.equals(")")) {
                 // until '(' on stack, pop operators.
                 while (s.peek() != -2)
+                    postfix.append(opsPrecedence.get(s.pop())).append(" ");
+                s.pop();
+            }
+            else if (token.equals("}")) {
+                // until '(' on stack, pop operators.
+                while (s.peek() != -4)
                     postfix.append(opsPrecedence.get(s.pop())).append(" ");
                 s.pop();
             }
@@ -664,6 +758,7 @@ public class CalculatorPanel extends JPanel {
         {
             // Delete trailing whitespace
             currInput = currInput.substring(0, currInput.length() - 1);
+            currExpression = currExpression.substring(0, currExpression.length() - 1);
             return true;
         }
         return false;
@@ -680,6 +775,7 @@ public class CalculatorPanel extends JPanel {
 
             // Delete preceding opening parenthesis
             currInput = currInput.substring(0, currInput.length() - 2);
+            currExpression = currExpression.substring(0, currExpression.length() - 2);
             display.setText(currInput);
             return true;
         }
@@ -693,6 +789,7 @@ public class CalculatorPanel extends JPanel {
         {
             // Insert multiplication operator
             currInput += "* ";
+            currExpression += "* ";
         }
     }
 
@@ -703,22 +800,27 @@ public class CalculatorPanel extends JPanel {
         {
             // Insert multiplication operator
             currInput += "* ";
+            currExpression += "* ";
         }
     }
 
-    private void enableDecimal() {
+    private void enableDecimal()
+    {
         decimalButton.setEnabled(true);
     }
 
-    private void disableDecimal() {
+    private void disableDecimal()
+    {
         decimalButton.setEnabled(false);
     }
 
-    private void enableZero(Boolean enabled) {
+    private void enableZero(Boolean enabled)
+    {
         a0Button.setEnabled(enabled);
     }
 
-    private void enableDigits(boolean enabled) {
+    private void enableDigits(boolean enabled)
+    {
         a1Button.setEnabled(enabled);
         a2Button.setEnabled(enabled);
         a3Button.setEnabled(enabled);
@@ -730,7 +832,8 @@ public class CalculatorPanel extends JPanel {
         a9Button.setEnabled(enabled);
     }
 
-    private void enableUnaryOps(boolean enabled) {
+    private void enableUnaryOps(boolean enabled)
+    {
         sinButton.setEnabled(enabled);
         cosButton.setEnabled(enabled);
         tanButton.setEnabled(enabled);
@@ -740,23 +843,13 @@ public class CalculatorPanel extends JPanel {
         subtractButton.setEnabled(enabled);
     }
 
-    private void enableBinaryOps() {
-        addButton.setEnabled(true);
-        subtractButton.setEnabled(true);
-        multiplyButton.setEnabled(true);
-        divideButton.setEnabled(true);
-        //equalButton.setEnabled(true);
-        expButton.setEnabled(true);
-    }
-
-    // Kept separate for now because of difference with (-)
-    private void disableBinaryOps() {
-        addButton.setEnabled(false);
-        //subtractButton.setEnabled(false);  REMAINS enabled, since (-) is also unary operator
-        multiplyButton.setEnabled(false);
-        divideButton.setEnabled(false);
-        //equalButton.setEnabled(false);     //IDK if this counts as a binary op??
-        expButton.setEnabled(false);
+    private void enableBinaryOps(Boolean enabled)
+    {
+        addButton.setEnabled(enabled);
+        subtractButton.setEnabled(enabled);
+        multiplyButton.setEnabled(enabled);
+        divideButton.setEnabled(enabled);
+        expButton.setEnabled(enabled);
     }
 
     private void enableClose(boolean enabled)       // Open are always enabled??
