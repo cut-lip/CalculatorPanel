@@ -509,7 +509,9 @@ public class CalculatorPanel extends JPanel {
     private String evaluate() {
         return evalRPN(infixToPostfix(currExpression));
     }
-    private static String evalRPN(String expr){
+    private static String evalRPN(String expr)
+    {
+        if (expr.equals("Error: Mismatched parenthesis")) return expr;
         // Function adapted from: https://rosettacode.org/wiki/Parsing/RPN_calculator_algorithm#Java_2
         LinkedList<Double> stack = new LinkedList<Double>();
         System.out.println("Input\tOperation\tStack after");
@@ -520,7 +522,7 @@ public class CalculatorPanel extends JPanel {
                 case "*" -> {
                     System.out.print("Operate\t\t");
                     double secondOperand = stack.pop();
-                    if (stack.isEmpty()) return "Error: Incorrect expression";
+                    if (stack.isEmpty()) return "Error: Missing multiplication operand";
                     double firstOperand = stack.pop();
                     stack.push(firstOperand * secondOperand);
                     break;
@@ -528,7 +530,7 @@ public class CalculatorPanel extends JPanel {
                 case "/" -> {
                     System.out.print("Operate\t\t");
                     double secondOperand = stack.pop();
-                    if (stack.isEmpty()) return "Error: Incorrect expression";
+                    if (stack.isEmpty()) return "Error: Missing division operand";
                     double firstOperand = stack.pop();
                     if (secondOperand == 0.0) {
                         return "Error: Division by zero is undefined";
@@ -539,7 +541,7 @@ public class CalculatorPanel extends JPanel {
                 case "-" -> {
                     System.out.print("Operate\t\t");
                     double secondOperand = stack.pop();
-                    if (stack.isEmpty()) return "Error: Incorrect expression";
+                    if (stack.isEmpty()) return "Error: Missing subtraction operand";
                     double firstOperand = stack.pop();
                     stack.push(firstOperand - secondOperand);
                     break;
@@ -547,7 +549,7 @@ public class CalculatorPanel extends JPanel {
                 case "+" -> {
                     System.out.print("Operate\t\t");
                     double secondOperand = stack.pop();
-                    if (stack.isEmpty()) return "Error: Incorrect expression";
+                    if (stack.isEmpty()) return "Error: Missing addition operand";
                     double firstOperand = stack.pop();
                     stack.push(firstOperand + secondOperand);
                     break;
@@ -555,7 +557,7 @@ public class CalculatorPanel extends JPanel {
                 case "^" -> {
                     System.out.print("Operate\t\t");
                     double secondOperand = stack.pop();
-                    if (stack.isEmpty()) return "Error: Incorrect expression";
+                    if (stack.isEmpty()) return "Error: Missing exponent";
                     double firstOperand = stack.pop();
                     stack.push(Math.pow(firstOperand, secondOperand));
                     break;
@@ -617,25 +619,6 @@ public class CalculatorPanel extends JPanel {
         }
         return "" + stack.pop();
     }
-
-    private void digitButtonAction(String s) {
-        insertPostCloseMult();
-        deletePostDigitWS();
-        currInput += s;
-        currExpression += s;
-        display.setText(currInput);
-        digitEnables();
-    }
-    private void digitEnables()
-    {
-        enableZero(true);
-        equalButton.setEnabled(parenCount == 0 && curlyCount == 0);
-        if (!insideDecimal) decimalButton.setEnabled(true);
-        enableBinaryOps(true);
-        enableUnaryOps(true);
-        checkLastOpenParen();
-    }
-
     static String infixToPostfix(String infix)
     {
         // Function adapted from: https://rosettacode.org/wiki/Parsing/Shunting-yard_algorithm#Java
@@ -678,14 +661,18 @@ public class CalculatorPanel extends JPanel {
             }
             else if (token.equals(")")) {
                 // until '(' on stack, pop operators.
-                while (s.peek() != -2)
+                while (s.peek() != -2) {
+                    if (s.peek() == -4) return "Error: Mismatched parenthesis";
                     postfix.append(opsPrecedence.get(s.pop())).append(" ");
+                }
                 s.pop();
             }
             else if (token.equals("}")) {
                 // until '(' on stack, pop operators.
-                while (s.peek() != -4)
+                while (s.peek() != -4) {
+                    if (s.peek() == -2) return "Error: Mismatched parenthesis";
                     postfix.append(opsPrecedence.get(s.pop())).append(" ");
+                }
                 s.pop();
             }
             else {
@@ -697,6 +684,24 @@ public class CalculatorPanel extends JPanel {
         return postfix.toString();
     }
 
+    private void digitButtonAction(String s)
+    {
+        insertPostCloseMult();
+        deletePostDigitWS();
+        currInput += s;
+        currExpression += s;
+        display.setText(currInput);
+        digitEnables();
+    }
+    private void digitEnables()
+    {
+        enableZero(true);
+        equalButton.setEnabled(parenCount == 0 && curlyCount == 0);
+        if (!insideDecimal) decimalButton.setEnabled(true);
+        enableBinaryOps(true);
+        enableUnaryOps(true);
+        checkLastOpenParen();
+    }
     private void checkLastOpenParen()
     {
         if (lastOpenParen.equals("(")) {
