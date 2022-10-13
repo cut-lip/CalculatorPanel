@@ -11,4 +11,4 @@ for the user. It is the users responsibility to close the set: i.e. "cos ("
 
 Empty sets of parenthesis or brackets will be automatically removed upon evaluation: i.e. () or {}
 
-Trigonometric functions are evaluated in degrees, NOT radians.
+Trigonometric functions are evaluated in radians.

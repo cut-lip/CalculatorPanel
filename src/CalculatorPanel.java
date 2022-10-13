@@ -9,7 +9,7 @@ public class CalculatorPanel extends JPanel {
     final static private String BINARY_OPS = "-+*/^=";
     final static private String[] UNARY_OPS = {"sin(", "cos(", "tan(" , "cot(", "ln(", "log("};
     final static private String[] OPS_PRECEDENCE = { "-", "+", "*", "/", "^", "^",
-            "sin(", "cos(", "tan(" , "cot(", "ln(", "log("};
+            "sin", "cos", "tan" , "cot", "ln", "log"};
 
     // Code above replaced concept below
     // final static ArrayList<String> UNARY_OPS = new ArrayList<>();
@@ -21,6 +21,8 @@ public class CalculatorPanel extends JPanel {
     // STACK IMPLEMENTATION TO REMEMBER WHAT COMES BEFORE
     // PUT LEFTS ON STACK, RIGHTS POP THEM
     private String currInput;
+    private String currExpression;
+
     // Keep track of whether other digits are allowed after a zero,
     // i.e. after a decimal point or within the digits of a larger number
     private boolean zeroOK;
@@ -132,11 +134,15 @@ public class CalculatorPanel extends JPanel {
         disableBinaryOps();
 
         a1Button.addActionListener(e -> {
-            String tempInput = "1 " ;
+            // If last button pressed was a digit, delete preceding whitespace
+            deletePostDigitZero();
+
+            // Concatenate symbol to curr input and print on display
+            String tempInput = "1 ";
             currInput += tempInput;
             display.setText(currInput);
 
-            //Enable necessary buttons
+            // Enable necessary buttons
             enableZero(true);
             enableDecimal();        // IS THIS ever disabled?
             enableBinaryOps();
@@ -145,6 +151,7 @@ public class CalculatorPanel extends JPanel {
         });
 
         a2Button.addActionListener(e -> {
+            deletePostDigitZero();
             String tempInput = "2 ";
             currInput += tempInput;
             display.setText(currInput);
@@ -158,6 +165,7 @@ public class CalculatorPanel extends JPanel {
         });
 
         a3Button.addActionListener(e -> {
+            deletePostDigitZero();
             String tempInput = "3 ";
             currInput += tempInput;
             display.setText(currInput);
@@ -171,6 +179,7 @@ public class CalculatorPanel extends JPanel {
         });
 
         a4Button.addActionListener(e -> {
+            deletePostDigitZero();
             String tempInput = "4 ";
             currInput += tempInput;
             display.setText(currInput);
@@ -184,6 +193,7 @@ public class CalculatorPanel extends JPanel {
         });
 
         a5Button.addActionListener(e -> {
+            deletePostDigitZero();
             String tempInput = "5 ";
             currInput += tempInput;
             display.setText(currInput);
@@ -197,6 +207,7 @@ public class CalculatorPanel extends JPanel {
         });
 
         a6Button.addActionListener(e -> {
+            deletePostDigitZero();
             String tempInput = "6 ";
             currInput += tempInput;
             display.setText(currInput);
@@ -210,6 +221,7 @@ public class CalculatorPanel extends JPanel {
         });
 
         a7Button.addActionListener(e -> {
+            deletePostDigitZero();
             String tempInput = "7 ";
             currInput += tempInput;
             display.setText(currInput);
@@ -223,6 +235,7 @@ public class CalculatorPanel extends JPanel {
         });
 
         a8Button.addActionListener(e -> {
+            deletePostDigitZero();
             String tempInput = "8 ";
             currInput += tempInput;
             display.setText(currInput);
@@ -236,6 +249,7 @@ public class CalculatorPanel extends JPanel {
         });
 
         a9Button.addActionListener(e -> {
+            deletePostDigitZero();
             String tempInput = "9 ";
             currInput += tempInput;
             display.setText(currInput);
@@ -249,6 +263,7 @@ public class CalculatorPanel extends JPanel {
         });
 
         a0Button.addActionListener(e -> {
+            deletePostDigitZero();
             String tempInput = "0 ";
             currInput += tempInput;
             display.setText(currInput);
@@ -474,13 +489,7 @@ public class CalculatorPanel extends JPanel {
 
     // Evaluate
     private String evaluate() {
-        String evaluated = "";
-        Stack<String> operands = new Stack<>();
-        Stack<String> operators = new Stack<>();
-
-        evaluated = evalRPN(infixToPostfix(currInput));
-
-        return evaluated;
+        return evalRPN(infixToPostfix(currInput));
     }
 
     private static String evalRPN(String expr){
@@ -529,19 +538,19 @@ public class CalculatorPanel extends JPanel {
                 //Unary Operators
                 case "sin" -> {
                     double operand = stack.pop();
-                    stack.push(Math.toDegrees(Math.sin(operand)));
+                    stack.push(Math.sin(operand));
                 }
                 case "cos" -> {
                     double operand = stack.pop();
-                    stack.push(Math.toDegrees(Math.cos(operand)));
+                    stack.push(Math.cos(operand));
                 }
                 case "tan" -> {
                     double operand = stack.pop();
-                    stack.push(Math.toDegrees(Math.tan(operand)));
+                    stack.push(Math.tan(operand));
                 }
                 case "cot" -> {
                     double operand = stack.pop();
-                    stack.push(1.0 / Math.toDegrees(Math.tan(operand)));
+                    stack.push(1.0 / Math.tan(operand));
                 }
                 case "ln" -> {
                     double operand = stack.pop();
@@ -618,6 +627,17 @@ public class CalculatorPanel extends JPanel {
         while (!s.isEmpty())
             postfix.append(opsPrecedence.get(s.pop())).append(' ');
         return postfix.toString();
+    }
+
+    private void deletePostDigitZero()
+    {
+        if (!currInput.equals("") &&
+                DIGITS.contains(currInput.substring(currInput.length() - 2, currInput.length() - 1)) &&
+                currInput.substring(currInput.length() - 1).equals(" "))
+        {
+            // Delete trailing whitespace
+            currInput = currInput.substring(0, currInput.length() - 1);
+        }
     }
 
     private void enableDecimal() {
