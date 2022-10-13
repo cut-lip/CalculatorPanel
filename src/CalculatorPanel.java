@@ -6,6 +6,8 @@ import java.util.*;
 public class CalculatorPanel extends JPanel {
 
     final static private String DIGITS = "1234567890";      // IS IT OKAY to include ZERO?
+    final static private String CLOSING_PARENS = ")}";
+    final static private String OPENING_PARENS = "({";
     final static private String BINARY_OPS = "-+*/^=";
     final static private String[] UNARY_OPS = {"sin(", "cos(", "tan(" , "cot(", "ln(", "log("};
     final static private String[] OPS_PRECEDENCE = { "-", "+", "*", "/", "^", "^",
@@ -38,7 +40,7 @@ public class CalculatorPanel extends JPanel {
     // Row 5 Buttons
     final private JButton equalButton, openCurlyButton, closeCurlyButton, lnButton, logButton;
     // Row 6 buttons
-    final private JButton decimalButton, expButton, clearButton;
+    final private JButton decimalButton, expButton, clearButton, backspaceButton;
     // Text I/O area
     private final JTextArea display = new JTextArea("0");
 
@@ -124,6 +126,7 @@ public class CalculatorPanel extends JPanel {
         panel.add(decimalButton);
         clearButton = new JButton("clear");
         panel.add(clearButton);
+        backspaceButton = new JButton("back");
 
         // Initial button states
         enableDecimal();
@@ -135,7 +138,10 @@ public class CalculatorPanel extends JPanel {
 
         a1Button.addActionListener(e -> {
             // If last button pressed was a digit, delete preceding whitespace
-            deletePostDigitZero();
+            deletePostDigitWS();
+
+            // If last button pressed was closing paren
+            insertPostCloseMult();
 
             // Concatenate symbol to curr input and print on display
             String tempInput = "1 ";
@@ -151,7 +157,8 @@ public class CalculatorPanel extends JPanel {
         });
 
         a2Button.addActionListener(e -> {
-            deletePostDigitZero();
+            deletePostDigitWS();
+            insertPostCloseMult();
             String tempInput = "2 ";
             currInput += tempInput;
             display.setText(currInput);
@@ -165,7 +172,8 @@ public class CalculatorPanel extends JPanel {
         });
 
         a3Button.addActionListener(e -> {
-            deletePostDigitZero();
+            deletePostDigitWS();
+            insertPostCloseMult();
             String tempInput = "3 ";
             currInput += tempInput;
             display.setText(currInput);
@@ -179,7 +187,8 @@ public class CalculatorPanel extends JPanel {
         });
 
         a4Button.addActionListener(e -> {
-            deletePostDigitZero();
+            deletePostDigitWS();
+            insertPostCloseMult();
             String tempInput = "4 ";
             currInput += tempInput;
             display.setText(currInput);
@@ -193,7 +202,8 @@ public class CalculatorPanel extends JPanel {
         });
 
         a5Button.addActionListener(e -> {
-            deletePostDigitZero();
+            deletePostDigitWS();
+            insertPostCloseMult();
             String tempInput = "5 ";
             currInput += tempInput;
             display.setText(currInput);
@@ -207,7 +217,8 @@ public class CalculatorPanel extends JPanel {
         });
 
         a6Button.addActionListener(e -> {
-            deletePostDigitZero();
+            deletePostDigitWS();
+            insertPostCloseMult();
             String tempInput = "6 ";
             currInput += tempInput;
             display.setText(currInput);
@@ -221,7 +232,8 @@ public class CalculatorPanel extends JPanel {
         });
 
         a7Button.addActionListener(e -> {
-            deletePostDigitZero();
+            deletePostDigitWS();
+            insertPostCloseMult();
             String tempInput = "7 ";
             currInput += tempInput;
             display.setText(currInput);
@@ -235,21 +247,23 @@ public class CalculatorPanel extends JPanel {
         });
 
         a8Button.addActionListener(e -> {
-            deletePostDigitZero();
+            deletePostDigitWS();
+            insertPostCloseMult();
             String tempInput = "8 ";
             currInput += tempInput;
             display.setText(currInput);
 
             // Enable necessary buttons
             enableZero(true);
-            enableDecimal();        // IS THIS ever disabled?
+            enableDecimal();
             enableBinaryOps();
             enableUnaryOps(true);       // are these ever disabled??
             enableClose(true);
         });
 
         a9Button.addActionListener(e -> {
-            deletePostDigitZero();
+            deletePostDigitWS();
+            insertPostCloseMult();
             String tempInput = "9 ";
             currInput += tempInput;
             display.setText(currInput);
@@ -263,7 +277,8 @@ public class CalculatorPanel extends JPanel {
         });
 
         a0Button.addActionListener(e -> {
-            deletePostDigitZero();
+            deletePostDigitWS();
+            insertPostCloseMult();
             String tempInput = "0 ";
             currInput += tempInput;
             display.setText(currInput);
@@ -317,6 +332,7 @@ public class CalculatorPanel extends JPanel {
         });
 
         sinButton.addActionListener(e -> {
+            insertPostCloseMult();
             String tempInput = "sin ( ";
             parenCount++;
             currInput += tempInput;
@@ -328,6 +344,7 @@ public class CalculatorPanel extends JPanel {
         });
 
         cosButton.addActionListener(e -> {
+            insertPostCloseMult();
             String tempInput = "cos ( ";
             parenCount++;
             currInput += tempInput;
@@ -339,6 +356,7 @@ public class CalculatorPanel extends JPanel {
         });
 
         tanButton.addActionListener(e -> {
+            insertPostCloseMult();
             String tempInput = "tan ( ";
             parenCount++;
             currInput += tempInput;
@@ -351,6 +369,7 @@ public class CalculatorPanel extends JPanel {
         });
 
         cotButton.addActionListener(e -> {
+            insertPostCloseMult();
             String tempInput = "cot ( ";
             parenCount++;
             currInput += tempInput;
@@ -363,6 +382,7 @@ public class CalculatorPanel extends JPanel {
         });
 
         lnButton.addActionListener(e -> {
+            insertPostCloseMult();
             String tempInput = "ln ( ";
             parenCount++;
             currInput += tempInput;
@@ -375,6 +395,7 @@ public class CalculatorPanel extends JPanel {
         });
 
         logButton.addActionListener(e -> {
+            insertPostCloseMult();
             String tempInput = "log ( ";
             parenCount++;
             currInput += tempInput;
@@ -400,11 +421,12 @@ public class CalculatorPanel extends JPanel {
         decimalButton.addActionListener(e -> {
             String tempInput;
             if (currInput.length() == 0 ||
-                    !DIGITS.contains(currInput.substring(currInput.length() - 1))) {
+                    !deletePostDigitWS()) {
                 tempInput = "0.";
             } else {
                 tempInput = ".";
             }
+            insertPostCloseMult();              // IS THIS OKAY?!?
             currInput += tempInput;
             display.setText(currInput);
 
@@ -415,6 +437,8 @@ public class CalculatorPanel extends JPanel {
         });
 
         openParenButton.addActionListener(e -> {
+            insertPostCloseMult();
+            insertPostDigitMult();
             parenCount++;
             String tempInput = "( ";
             currInput += tempInput;
@@ -427,7 +451,7 @@ public class CalculatorPanel extends JPanel {
         });
 
         closeParenButton.addActionListener(e -> {
-            if (parenCount > 0) {
+            if (parenCount > 0 && !deletePostOpenClose()) {
                 String tempInput = ") ";
                 currInput += tempInput;
                 display.setText(currInput);
@@ -437,6 +461,8 @@ public class CalculatorPanel extends JPanel {
         });
 
         openCurlyButton.addActionListener(e -> {
+            insertPostCloseMult();
+            insertPostDigitMult();
             curlyCount++;
             String tempInput = "{ ";
             currInput += tempInput;
@@ -449,7 +475,7 @@ public class CalculatorPanel extends JPanel {
         });
 
         closeCurlyButton.addActionListener(e -> {
-            if (curlyCount > 0) {
+            if (curlyCount > 0 && !deletePostOpenClose()) {
                 String tempInput = "} ";
                 currInput += tempInput;
                 display.setText(currInput);
@@ -471,6 +497,8 @@ public class CalculatorPanel extends JPanel {
             disableBinaryOps();
         });
 
+        // Backspace button???
+
         equalButton.addActionListener(e -> {
             display.setText(evaluate());
             currInput = "";
@@ -491,7 +519,6 @@ public class CalculatorPanel extends JPanel {
     private String evaluate() {
         return evalRPN(infixToPostfix(currInput));
     }
-
     private static String evalRPN(String expr){
         // Function adapted from: https://rosettacode.org/wiki/Parsing/RPN_calculator_algorithm#Java_2
         LinkedList<Double> stack = new LinkedList<Double>();
@@ -629,7 +656,7 @@ public class CalculatorPanel extends JPanel {
         return postfix.toString();
     }
 
-    private void deletePostDigitZero()
+    private boolean deletePostDigitWS()
     {
         if (!currInput.equals("") &&
                 DIGITS.contains(currInput.substring(currInput.length() - 2, currInput.length() - 1)) &&
@@ -637,6 +664,45 @@ public class CalculatorPanel extends JPanel {
         {
             // Delete trailing whitespace
             currInput = currInput.substring(0, currInput.length() - 1);
+            return true;
+        }
+        return false;
+    }
+
+    private boolean deletePostOpenClose()
+    {
+        if (!currInput.equals("") &&
+                OPENING_PARENS.contains(currInput.substring(currInput.length() - 2, currInput.length() - 1)))
+        {
+            // Adjust paren counts
+            if (currInput.charAt(currInput.length() - 2) == '(') parenCount--;
+            else curlyCount--;
+
+            // Delete preceding opening parenthesis
+            currInput = currInput.substring(0, currInput.length() - 2);
+            display.setText(currInput);
+            return true;
+        }
+        return false;
+    }
+
+    private void insertPostDigitMult()
+    {
+        if (!currInput.equals("") &&
+                DIGITS.contains(currInput.substring(currInput.length() - 2, currInput.length() - 1)))
+        {
+            // Insert multiplication operator
+            currInput += "* ";
+        }
+    }
+
+    private void insertPostCloseMult()
+    {
+        if (!currInput.equals("") &&
+                CLOSING_PARENS.contains(currInput.substring(currInput.length() - 2, currInput.length() - 1)))
+        {
+            // Insert multiplication operator
+            currInput += "* ";
         }
     }
 
