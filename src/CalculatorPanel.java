@@ -142,107 +142,52 @@ public class CalculatorPanel extends JPanel {
         enableBinaryOps(false);
 
         a1Button.addActionListener(e -> {
-            // If last button pressed was closing paren
-            insertPostCloseMult();
-
-            // If last button pressed was a digit, delete preceding whitespace
-            deletePostDigitWS();
-
-            // Concatenate symbol to curr input and print on display
-            String tempInput = "1 ";
-            currInput += tempInput;
-            currExpression += tempInput;
-            display.setText(currInput);
+            digitButtonAction("1 ");
             digitEnables();
         });
 
         a2Button.addActionListener(e -> {
-            insertPostCloseMult();
-            deletePostDigitWS();
-            String tempInput = "2 ";
-            currInput += tempInput;
-            currExpression += tempInput;
-            display.setText(currInput);
+            digitButtonAction("2 ");
             digitEnables();
         });
 
         a3Button.addActionListener(e -> {
-            insertPostCloseMult();
-            deletePostDigitWS();
-            String tempInput = "3 ";
-            currInput += tempInput;
-            currExpression += tempInput;
-            display.setText(currInput);
+            digitButtonAction("3 ");
             digitEnables();
         });
 
         a4Button.addActionListener(e -> {
-            insertPostCloseMult();
-            deletePostDigitWS();
-            String tempInput = "4 ";
-            currInput += tempInput;
-            currExpression += tempInput;
-            display.setText(currInput);
+            digitButtonAction("4 ");
             digitEnables();
         });
 
         a5Button.addActionListener(e -> {
-            insertPostCloseMult();
-            deletePostDigitWS();
-            String tempInput = "5 ";
-            currInput += tempInput;
-            currExpression += tempInput;
-            display.setText(currInput);
+            digitButtonAction("5 ");
             digitEnables();
         });
 
         a6Button.addActionListener(e -> {
-            insertPostCloseMult();
-            deletePostDigitWS();
-            String tempInput = "6 ";
-            currInput += tempInput;
-            currExpression += tempInput;
-            display.setText(currInput);
+            digitButtonAction("6 ");
             digitEnables();
         });
 
         a7Button.addActionListener(e -> {
-            insertPostCloseMult();
-            deletePostDigitWS();
-            String tempInput = "7 ";
-            currInput += tempInput;
-            currExpression += tempInput;
-            display.setText(currInput);
+            digitButtonAction("7 ");
             digitEnables();
         });
 
         a8Button.addActionListener(e -> {
-            insertPostCloseMult();
-            deletePostDigitWS();
-            String tempInput = "8 ";
-            currInput += tempInput;
-            currExpression += tempInput;
-            display.setText(currInput);
+            digitButtonAction("8 ");
             digitEnables();
         });
 
         a9Button.addActionListener(e -> {
-            insertPostCloseMult();
-            deletePostDigitWS();
-            String tempInput = "9 ";
-            currInput += tempInput;
-            currExpression += tempInput;
-            display.setText(currInput);
+            digitButtonAction("9 ");
             digitEnables();
         });
 
         a0Button.addActionListener(e -> {
-            insertPostCloseMult();
-            deletePostDigitWS();
-            String tempInput = "0 ";
-            currInput += tempInput;
-            currExpression += tempInput;
-            display.setText(currInput);
+            digitButtonAction("0 ");
 
             // Enable necessary buttons
             if (!insideDecimal) decimalButton.setEnabled(true);
@@ -575,6 +520,7 @@ public class CalculatorPanel extends JPanel {
                 case "*" -> {
                     System.out.print("Operate\t\t");
                     double secondOperand = stack.pop();
+                    if (stack.isEmpty()) return "Error: Incorrect expression";
                     double firstOperand = stack.pop();
                     stack.push(firstOperand * secondOperand);
                     break;
@@ -582,6 +528,7 @@ public class CalculatorPanel extends JPanel {
                 case "/" -> {
                     System.out.print("Operate\t\t");
                     double secondOperand = stack.pop();
+                    if (stack.isEmpty()) return "Error: Incorrect expression";
                     double firstOperand = stack.pop();
                     if (secondOperand == 0.0) {
                         return "Error: Division by zero is undefined";
@@ -592,6 +539,7 @@ public class CalculatorPanel extends JPanel {
                 case "-" -> {
                     System.out.print("Operate\t\t");
                     double secondOperand = stack.pop();
+                    if (stack.isEmpty()) return "Error: Incorrect expression";
                     double firstOperand = stack.pop();
                     stack.push(firstOperand - secondOperand);
                     break;
@@ -599,6 +547,7 @@ public class CalculatorPanel extends JPanel {
                 case "+" -> {
                     System.out.print("Operate\t\t");
                     double secondOperand = stack.pop();
+                    if (stack.isEmpty()) return "Error: Incorrect expression";
                     double firstOperand = stack.pop();
                     stack.push(firstOperand + secondOperand);
                     break;
@@ -606,24 +555,29 @@ public class CalculatorPanel extends JPanel {
                 case "^" -> {
                     System.out.print("Operate\t\t");
                     double secondOperand = stack.pop();
+                    if (stack.isEmpty()) return "Error: Incorrect expression";
                     double firstOperand = stack.pop();
                     stack.push(Math.pow(firstOperand, secondOperand));
                     break;
                 }
                 //Unary Operators
                 case "sin" -> {
+                    if (stack.isEmpty()) return "Error: Incorrect sin expression";
                     double operand = stack.pop();
                     stack.push(Math.sin(operand));
                 }
                 case "cos" -> {
+                    if (stack.isEmpty()) return "Error: Incorrect cos expression";
                     double operand = stack.pop();
                     stack.push(Math.cos(operand));
                 }
                 case "tan" -> {
+                    if (stack.isEmpty()) return "Error: Incorrect tan expression";
                     double operand = stack.pop();
                     stack.push(Math.tan(operand));
                 }
                 case "cot" -> {
+                    if (stack.isEmpty()) return "Error: Incorrect cot expression";
                     double operand = stack.pop();
                     if (operand == 0.0) {
                         return "Error: cot ( 0 ) is undefined";
@@ -631,6 +585,7 @@ public class CalculatorPanel extends JPanel {
                     stack.push(1.0 / Math.tan(operand));
                 }
                 case "ln" -> {
+                    if (stack.isEmpty()) return "Error: Incorrect ln expression";
                     double operand = stack.pop();
                     if (operand <= 0.0) {
                         return "Error: ln ( n <= 0 ) is undefined";
@@ -638,6 +593,7 @@ public class CalculatorPanel extends JPanel {
                     stack.push(Math.log(operand));
                 }
                 case "log" -> {
+                    if (stack.isEmpty()) return "Error: Incorrect log expression";
                     double operand = stack.pop();
                     if (operand <= 0.0) {
                         return "Error: log ( n <= 0 ) is undefined";
@@ -662,6 +618,14 @@ public class CalculatorPanel extends JPanel {
         return "" + stack.pop();
     }
 
+    private void digitButtonAction(String s) {
+        insertPostCloseMult();
+        deletePostDigitWS();
+        currInput += s;
+        currExpression += s;
+        display.setText(currInput);
+        digitEnables();
+    }
     private void digitEnables()
     {
         enableZero(true);
