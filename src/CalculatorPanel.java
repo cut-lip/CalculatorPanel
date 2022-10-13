@@ -17,6 +17,7 @@ public class CalculatorPanel extends JPanel {
     // final static ArrayList<String> UNARY_OPS = new ArrayList<>();
 
     private String lastOpenParen = "";
+    private boolean insideDecimal = false;
     private int parenCount;
     private int curlyCount;
     private enum mostRecentControlSymbol {
@@ -133,7 +134,7 @@ public class CalculatorPanel extends JPanel {
         panel.add(clearButton);
 
         // Initial button states
-        enableDecimal();
+        decimalButton.setEnabled(true);
         enableUnaryOps(true);
         enableDigits(true);
         equalButton.setEnabled(false);
@@ -152,14 +153,7 @@ public class CalculatorPanel extends JPanel {
             currInput += tempInput;
             currExpression += tempInput;
             display.setText(currInput);
-
-            // Enable necessary buttons
-            enableZero(true);
-            equalButton.setEnabled(true);
-            enableDecimal();        // IS THIS ever disabled?
-            enableBinaryOps(true);
-            enableUnaryOps(true);       // are these ever disabled??
-            checkLastOpenParen();
+            digitEnables();
         });
 
         a2Button.addActionListener(e -> {
@@ -169,14 +163,7 @@ public class CalculatorPanel extends JPanel {
             currInput += tempInput;
             currExpression += tempInput;
             display.setText(currInput);
-
-            // Enable necessary buttons
-            enableZero(true);
-            equalButton.setEnabled(true);
-            enableDecimal();        // IS THIS ever disabled?
-            enableBinaryOps(true);
-            enableUnaryOps(true);       // are these ever disabled??
-            checkLastOpenParen();
+            digitEnables();
         });
 
         a3Button.addActionListener(e -> {
@@ -186,14 +173,7 @@ public class CalculatorPanel extends JPanel {
             currInput += tempInput;
             currExpression += tempInput;
             display.setText(currInput);
-
-            // Enable necessary buttons
-            enableZero(true);
-            equalButton.setEnabled(true);
-            enableDecimal();        // IS THIS ever disabled?
-            enableBinaryOps(true);
-            enableUnaryOps(true);       // are these ever disabled??
-            checkLastOpenParen();
+            digitEnables();
         });
 
         a4Button.addActionListener(e -> {
@@ -203,14 +183,7 @@ public class CalculatorPanel extends JPanel {
             currInput += tempInput;
             currExpression += tempInput;
             display.setText(currInput);
-
-            // Enable necessary buttons
-            enableZero(true);
-            equalButton.setEnabled(true);
-            enableDecimal();        // IS THIS ever disabled?
-            enableBinaryOps(true);
-            enableUnaryOps(true);       // are these ever disabled??
-            checkLastOpenParen();
+            digitEnables();
         });
 
         a5Button.addActionListener(e -> {
@@ -220,14 +193,7 @@ public class CalculatorPanel extends JPanel {
             currInput += tempInput;
             currExpression += tempInput;
             display.setText(currInput);
-
-            // Enable necessary buttons
-            enableZero(true);
-            equalButton.setEnabled(parenCount == 0 && curlyCount == 0);
-            enableDecimal();        // IS THIS ever disabled?
-            enableBinaryOps(true);
-            enableUnaryOps(true);       // are these ever disabled??
-            checkLastOpenParen();
+            digitEnables();
         });
 
         a6Button.addActionListener(e -> {
@@ -237,14 +203,7 @@ public class CalculatorPanel extends JPanel {
             currInput += tempInput;
             currExpression += tempInput;
             display.setText(currInput);
-
-            // Enable necessary buttons
-            enableZero(true);
-            equalButton.setEnabled(parenCount == 0 && curlyCount == 0);
-            enableDecimal();        // IS THIS ever disabled?
-            enableBinaryOps(true);
-            enableUnaryOps(true);       // are these ever disabled??
-            checkLastOpenParen();
+            digitEnables();
         });
 
         a7Button.addActionListener(e -> {
@@ -254,14 +213,7 @@ public class CalculatorPanel extends JPanel {
             currInput += tempInput;
             currExpression += tempInput;
             display.setText(currInput);
-
-            // Enable necessary buttons
-            enableZero(true);
-            equalButton.setEnabled(parenCount == 0 && curlyCount == 0);
-            enableDecimal();        // IS THIS ever disabled?
-            enableBinaryOps(true);
-            enableUnaryOps(true);       // are these ever disabled??
-            checkLastOpenParen();
+            digitEnables();
         });
 
         a8Button.addActionListener(e -> {
@@ -271,14 +223,7 @@ public class CalculatorPanel extends JPanel {
             currInput += tempInput;
             currExpression += tempInput;
             display.setText(currInput);
-
-            // Enable necessary buttons
-            enableZero(true);
-            equalButton.setEnabled(parenCount == 0 && curlyCount == 0);
-            enableDecimal();
-            enableBinaryOps(true);
-            enableUnaryOps(true);       // are these ever disabled??
-            checkLastOpenParen();
+            digitEnables();
         });
 
         a9Button.addActionListener(e -> {
@@ -288,14 +233,7 @@ public class CalculatorPanel extends JPanel {
             currInput += tempInput;
             currExpression += tempInput;
             display.setText(currInput);
-
-            // Enable necessary buttons
-            enableZero(true);
-            equalButton.setEnabled(parenCount == 0 && curlyCount == 0);
-            enableDecimal();
-            enableBinaryOps(true);
-            enableUnaryOps(true);
-            checkLastOpenParen();
+            digitEnables();
         });
 
         a0Button.addActionListener(e -> {
@@ -307,7 +245,7 @@ public class CalculatorPanel extends JPanel {
             display.setText(currInput);
 
             // Enable necessary buttons
-            enableDecimal();
+            if (!insideDecimal) decimalButton.setEnabled(true);
             enableBinaryOps(true);
             enableUnaryOps(true);
             checkLastOpenParen();
@@ -322,6 +260,7 @@ public class CalculatorPanel extends JPanel {
             display.setText(currInput);
 
             // Disable necessary buttons
+            decimalButton.setEnabled(true);
             enableBinaryOps(false);
             equalButton.setEnabled(false);
             enableClose(false);
@@ -334,6 +273,7 @@ public class CalculatorPanel extends JPanel {
             display.setText(currInput);
 
             // Disable necessary buttons
+            decimalButton.setEnabled(true);
             enableBinaryOps(false);
             equalButton.setEnabled(false);
             enableClose(false);
@@ -346,6 +286,7 @@ public class CalculatorPanel extends JPanel {
             display.setText(currInput);
 
             // Disable necessary buttons
+            decimalButton.setEnabled(true);
             enableBinaryOps(false);
             equalButton.setEnabled(false);
             enableClose(false);
@@ -358,6 +299,7 @@ public class CalculatorPanel extends JPanel {
             display.setText(currInput);
 
             // Disable necessary buttons
+            decimalButton.setEnabled(true);
             enableBinaryOps(false);
             a0Button.setEnabled(false);
             equalButton.setEnabled(false);
@@ -377,6 +319,7 @@ public class CalculatorPanel extends JPanel {
             display.setText(currInput);
 
             // Disable necessary buttons
+            decimalButton.setEnabled(true);
             closeParenButton.setEnabled(false);
             enableBinaryOps(false);
             equalButton.setEnabled(false);
@@ -394,6 +337,7 @@ public class CalculatorPanel extends JPanel {
             display.setText(currInput);
 
             // Disable necessary buttons
+            decimalButton.setEnabled(true);
             closeParenButton.setEnabled(false);
             enableBinaryOps(false);
             equalButton.setEnabled(false);
@@ -411,6 +355,7 @@ public class CalculatorPanel extends JPanel {
             display.setText(currInput);
 
             // Disable necessary buttons
+            decimalButton.setEnabled(true);
             closeParenButton.setEnabled(false);
             enableBinaryOps(false);
             equalButton.setEnabled(false);
@@ -428,6 +373,7 @@ public class CalculatorPanel extends JPanel {
             display.setText(currInput);
 
             // Disable necessary buttons
+            decimalButton.setEnabled(true);
             closeParenButton.setEnabled(false);
             enableBinaryOps(false);
             a0Button.setEnabled(false);
@@ -445,6 +391,7 @@ public class CalculatorPanel extends JPanel {
             display.setText(currInput);
 
             // Disable necessary buttons
+            decimalButton.setEnabled(true);
             closeParenButton.setEnabled(false);
             enableBinaryOps(false);
             a0Button.setEnabled(false);
@@ -462,6 +409,7 @@ public class CalculatorPanel extends JPanel {
             display.setText(currInput);
 
             // Disable necessary buttons
+            decimalButton.setEnabled(true);
             closeParenButton.setEnabled(false);
             enableBinaryOps(false);
             a0Button.setEnabled(false);
@@ -480,6 +428,7 @@ public class CalculatorPanel extends JPanel {
             display.setText(currInput);
 
             // Disable necessary buttons
+            decimalButton.setEnabled(true);
             enableBinaryOps(false);
             equalButton.setEnabled(false);
         });
@@ -493,6 +442,7 @@ public class CalculatorPanel extends JPanel {
             display.setText(currInput);
 
             // Disable necessary buttons
+            decimalButton.setEnabled(true);
             closeParenButton.setEnabled(false);
             enableBinaryOps(false);
             equalButton.setEnabled(false);
@@ -506,13 +456,14 @@ public class CalculatorPanel extends JPanel {
             } else {
                 tempInput = ".";
             }
-            insertPostCloseMult();              // IS THIS OKAY?!?
+            insertPostCloseMult();
             currInput += tempInput;
             currExpression += tempInput;
             display.setText(currInput);
 
             // Disable necessary buttons
-            disableDecimal();
+            decimalButton.setEnabled(false);
+            insideDecimal = true;
             enableBinaryOps(false);
             equalButton.setEnabled(false);
             enableClose(false);
@@ -584,7 +535,7 @@ public class CalculatorPanel extends JPanel {
             display.setText(currInput);
 
             // Initial button states
-            enableDecimal();
+            if (!insideDecimal) decimalButton.setEnabled(true);
             enableUnaryOps(true);
             enableDigits(true);
             equalButton.setEnabled(false);
@@ -598,7 +549,7 @@ public class CalculatorPanel extends JPanel {
             currExpression = "";
 
             // Disable necessary buttons
-            enableDecimal();
+            decimalButton.setEnabled(true);
             enableUnaryOps(true);
             enableDigits(true);
             equalButton.setEnabled(false);
@@ -681,19 +632,18 @@ public class CalculatorPanel extends JPanel {
                 }
                 case "ln" -> {
                     double operand = stack.pop();
-                    if (operand == 0.0) {
-                        return "Error: ln ( 0 ) is undefined";
+                    if (operand <= 0.0) {
+                        return "Error: ln ( n <= 0 ) is undefined";
                     }
                     stack.push(Math.log(operand));
                 }
                 case "log" -> {
                     double operand = stack.pop();
-                    if (operand == 0.0) {
-                        return "Error: log ( 0 ) is undefined";
+                    if (operand <= 0.0) {
+                        return "Error: log ( n <= 0 ) is undefined";
                     }
                     stack.push(Math.log(operand));
                 }
-
                 // Digits
                 default -> {
                     System.out.print("Push\t\t");
@@ -711,6 +661,17 @@ public class CalculatorPanel extends JPanel {
         }
         return "" + stack.pop();
     }
+
+    private void digitEnables()
+    {
+        enableZero(true);
+        equalButton.setEnabled(parenCount == 0 && curlyCount == 0);
+        if (!insideDecimal) decimalButton.setEnabled(true);
+        enableBinaryOps(true);
+        enableUnaryOps(true);
+        checkLastOpenParen();
+    }
+
     static String infixToPostfix(String infix)
     {
         // Function adapted from: https://rosettacode.org/wiki/Parsing/Shunting-yard_algorithm#Java
@@ -834,16 +795,6 @@ public class CalculatorPanel extends JPanel {
             currInput += "* ";
             currExpression += "* ";
         }
-    }
-
-    private void enableDecimal()
-    {
-        decimalButton.setEnabled(true);
-    }
-
-    private void disableDecimal()
-    {
-        decimalButton.setEnabled(false);
     }
 
     private void enableZero(Boolean enabled)
