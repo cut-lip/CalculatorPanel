@@ -1,33 +1,47 @@
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
-import java.util.ArrayList;
-import java.util.Stack;
-import java.util.Scanner;
+import java.util.*;
+
 public class CalculatorPanel extends JPanel {
 
     final static private String DIGITS = "1234567890";      // IS IT OKAY to include ZERO?
+    final static private String BINARY_OPS = "-+*/^=";
+    final static private String[] UNARY_OPS = {"sin(", "cos(", "tan(" , "cot(", "ln(", "log("};
+    final static private String[] OPS_PRECEDENCE = { "-", "+", "*", "/", "^", "^",
+            "sin(", "cos(", "tan(" , "cot(", "ln(", "log("};
+
     // Code above replaced concept below
     // final static ArrayList<String> UNARY_OPS = new ArrayList<>();
     private int parenCount;
     private int curlyCount;
     private enum mostRecentControlSymbol {
-        openParen, closePren, openCurly, closeCurly;
+        openParen, closePren, openCurly, closeCurly
     }
+    // STACK IMPLEMENTATION TO REMEMBER WHAT COMES BEFORE
+    // PUT LEFTS ON STACK, RIGHTS POP THEM
     private String currInput;
     // Keep track of whether other digits are allowed after a zero,
     // i.e. after a decimal point or within the digits of a larger number
     private boolean zeroOK;
+
+    // Row 1 buttons
     final private JButton a1Button, a2Button, a3Button, addButton, subtractButton;
+    // Row 2 buttons
     final private JButton a4Button, a5Button, a6Button, multiplyButton, divideButton;
+    // Row 3 buttons
     final private JButton a7Button, a8Button, a9Button, sinButton, cosButton;
+    // Row 4 buttons
     final private JButton a0Button, openParenButton, closeParenButton, tanButton, cotButton;
+    // Row 5 Buttons
     final private JButton equalButton, openCurlyButton, closeCurlyButton, lnButton, logButton;
+    // Row 6 buttons
     final private JButton decimalButton, expButton, clearButton;
+    // Text I/O area
     private final JTextArea display = new JTextArea("0");
 
     public CalculatorPanel() {
-        setLayout(new BorderLayout(2, 2));
+        setLayout(new BorderLayout(10, 10));
         //this.setBackground(Color.green);
 
         display.setEditable(false);
@@ -118,7 +132,7 @@ public class CalculatorPanel extends JPanel {
         disableBinaryOps();
 
         a1Button.addActionListener(e -> {
-            String tempInput = "1";
+            String tempInput = "1 " ;
             currInput += tempInput;
             display.setText(currInput);
 
@@ -131,7 +145,7 @@ public class CalculatorPanel extends JPanel {
         });
 
         a2Button.addActionListener(e -> {
-            String tempInput = "2";
+            String tempInput = "2 ";
             currInput += tempInput;
             display.setText(currInput);
 
@@ -144,7 +158,7 @@ public class CalculatorPanel extends JPanel {
         });
 
         a3Button.addActionListener(e -> {
-            String tempInput = "3";
+            String tempInput = "3 ";
             currInput += tempInput;
             display.setText(currInput);
 
@@ -157,7 +171,7 @@ public class CalculatorPanel extends JPanel {
         });
 
         a4Button.addActionListener(e -> {
-            String tempInput = "4";
+            String tempInput = "4 ";
             currInput += tempInput;
             display.setText(currInput);
 
@@ -170,7 +184,7 @@ public class CalculatorPanel extends JPanel {
         });
 
         a5Button.addActionListener(e -> {
-            String tempInput = "5";
+            String tempInput = "5 ";
             currInput += tempInput;
             display.setText(currInput);
 
@@ -183,7 +197,7 @@ public class CalculatorPanel extends JPanel {
         });
 
         a6Button.addActionListener(e -> {
-            String tempInput = "6";
+            String tempInput = "6 ";
             currInput += tempInput;
             display.setText(currInput);
 
@@ -196,7 +210,7 @@ public class CalculatorPanel extends JPanel {
         });
 
         a7Button.addActionListener(e -> {
-            String tempInput = "7";
+            String tempInput = "7 ";
             currInput += tempInput;
             display.setText(currInput);
 
@@ -209,7 +223,7 @@ public class CalculatorPanel extends JPanel {
         });
 
         a8Button.addActionListener(e -> {
-            String tempInput = "8";
+            String tempInput = "8 ";
             currInput += tempInput;
             display.setText(currInput);
 
@@ -222,7 +236,7 @@ public class CalculatorPanel extends JPanel {
         });
 
         a9Button.addActionListener(e -> {
-            String tempInput = "9";
+            String tempInput = "9 ";
             currInput += tempInput;
             display.setText(currInput);
 
@@ -235,7 +249,7 @@ public class CalculatorPanel extends JPanel {
         });
 
         a0Button.addActionListener(e -> {
-            String tempInput = "0";
+            String tempInput = "0 ";
             currInput += tempInput;
             display.setText(currInput);
 
@@ -245,50 +259,50 @@ public class CalculatorPanel extends JPanel {
 
         // Bind setEnabled function to same boolean
         addButton.addActionListener(e -> {
+            String tempInput = "+ ";
+            currInput += tempInput;
+            display.setText(currInput);
+
             // Disable necessary buttons
             disableBinaryOps();
-            closeParenButton.setEnabled(false);
-            closeCurlyButton.setEnabled(false);
+            enableClose(false);
         });
 
         subtractButton.addActionListener(e -> {
-            String tempInput = "-";
+            String tempInput = "- ";
             currInput += tempInput;
             display.setText(currInput);
 
             // Disable necessary buttons
             disableBinaryOps();
-            closeParenButton.setEnabled(false);
-            closeCurlyButton.setEnabled(false);
+            enableClose(false);
         });
 
         multiplyButton.addActionListener(e -> {
-            String tempInput = "*";
+            String tempInput = "* ";
             currInput += tempInput;
             display.setText(currInput);
 
             // Disable necessary buttons
             disableBinaryOps();
-            closeParenButton.setEnabled(false);
-            closeCurlyButton.setEnabled(false);
+            enableClose(false);
         });
 
         divideButton.addActionListener(e -> {
-            String tempInput = "/";
+            String tempInput = "/ ";
             currInput += tempInput;
             display.setText(currInput);
 
             // Disable necessary buttons
             disableBinaryOps();
             a0Button.setEnabled(false);
-            closeParenButton.setEnabled(false);
-            closeCurlyButton.setEnabled(false);
+            enableClose(false);
 
             // Enable necessary buttons
         });
 
         sinButton.addActionListener(e -> {
-            String tempInput = "sin(";
+            String tempInput = "sin ( ";
             parenCount++;
             currInput += tempInput;
             display.setText(currInput);
@@ -299,7 +313,7 @@ public class CalculatorPanel extends JPanel {
         });
 
         cosButton.addActionListener(e -> {
-            String tempInput = "cos(";
+            String tempInput = "cos ( ";
             parenCount++;
             currInput += tempInput;
             display.setText(currInput);
@@ -310,7 +324,7 @@ public class CalculatorPanel extends JPanel {
         });
 
         tanButton.addActionListener(e -> {
-            String tempInput = "tan";
+            String tempInput = "tan ( ";
             parenCount++;
             currInput += tempInput;
             display.setText(currInput);
@@ -322,7 +336,7 @@ public class CalculatorPanel extends JPanel {
         });
 
         cotButton.addActionListener(e -> {
-            String tempInput = "cot(";
+            String tempInput = "cot ( ";
             parenCount++;
             currInput += tempInput;
             display.setText(currInput);
@@ -334,7 +348,7 @@ public class CalculatorPanel extends JPanel {
         });
 
         lnButton.addActionListener(e -> {
-            String tempInput = "ln(";
+            String tempInput = "ln ( ";
             parenCount++;
             currInput += tempInput;
             display.setText(currInput);
@@ -346,7 +360,7 @@ public class CalculatorPanel extends JPanel {
         });
 
         logButton.addActionListener(e -> {
-            String tempInput = "log(";
+            String tempInput = "log ( ";
             parenCount++;
             currInput += tempInput;
             display.setText(currInput);
@@ -358,7 +372,7 @@ public class CalculatorPanel extends JPanel {
         });
 
         expButton.addActionListener(e -> {
-            String tempInput = "^(";
+            String tempInput = "^ ( ";
             parenCount++;
             currInput += tempInput;
             display.setText(currInput);
@@ -387,54 +401,72 @@ public class CalculatorPanel extends JPanel {
 
         openParenButton.addActionListener(e -> {
             parenCount++;
-            String tempInput = "(";
+            String tempInput = "( ";
             currInput += tempInput;
             display.setText(currInput);
 
             // Disable necessary buttons
             disableBinaryOps();
             enableZero(false);
+            enableClose(true);
         });
 
         closeParenButton.addActionListener(e -> {
             if (parenCount > 0) {
-                String tempInput = ")";
+                String tempInput = ") ";
                 currInput += tempInput;
                 display.setText(currInput);
                 parenCount--;
             }
+            equalButton.setEnabled(parenCount == 0 && curlyCount == 0);
         });
 
         openCurlyButton.addActionListener(e -> {
             curlyCount++;
-            String tempInput = "{";
+            String tempInput = "{ ";
             currInput += tempInput;
             display.setText(currInput);
 
             // Disable necessary buttons
-            //enable
             disableBinaryOps();
             enableZero(false);
+            enableClose(true);
         });
 
         closeCurlyButton.addActionListener(e -> {
             if (curlyCount > 0) {
-                String tempInput = "}";
+                String tempInput = "} ";
                 currInput += tempInput;
                 display.setText(currInput);
                 curlyCount--;
             }
+            equalButton.setEnabled(curlyCount == 0 && parenCount == 0);
         });
 
         clearButton.addActionListener(e -> {
             currInput = "";
             display.setText(currInput);
+
+            // Initial button states
+            enableDecimal();
+            enableUnaryOps(true);
+            enableDigits(true);
+
+            enableZero(false);
+            disableBinaryOps();
         });
 
         equalButton.addActionListener(e -> {
             display.setText(evaluate());
             currInput = "";
+
             // Disable necessary buttons
+            enableDecimal();
+            enableUnaryOps(true);
+            enableDigits(true);
+
+            enableZero(false);
+            disableBinaryOps();
         });
 
         add(panel, "Center");
@@ -442,15 +474,150 @@ public class CalculatorPanel extends JPanel {
 
     // Evaluate
     private String evaluate() {
-        Scanner s = new Scanner(currInput);
         String evaluated = "";
         Stack<String> operands = new Stack<>();
         Stack<String> operators = new Stack<>();
 
-        // for (the love of the goddess)
+        evaluated = evalRPN(infixToPostfix(currInput));
 
-        // Shunting yard?? Lol
         return evaluated;
+    }
+
+    private static String evalRPN(String expr){
+        // Function adapted from: https://rosettacode.org/wiki/Parsing/RPN_calculator_algorithm#Java_2
+        LinkedList<Double> stack = new LinkedList<Double>();
+        System.out.println("Input\tOperation\tStack after");
+        for (String token : expr.split("\\s")){
+            System.out.print(token + "\t");
+            switch (token) {
+                // Binary Operators
+                case "*" -> {
+                    System.out.print("Operate\t\t");
+                    double secondOperand = stack.pop();
+                    double firstOperand = stack.pop();
+                    stack.push(firstOperand * secondOperand);
+                    break;
+                }
+                case "/" -> {
+                    System.out.print("Operate\t\t");
+                    double secondOperand = stack.pop();
+                    double firstOperand = stack.pop();
+                    stack.push(firstOperand / secondOperand);
+                    break;
+                }
+                case "-" -> {
+                    System.out.print("Operate\t\t");
+                    double secondOperand = stack.pop();
+                    double firstOperand = stack.pop();
+                    stack.push(firstOperand - secondOperand);
+                    break;
+                }
+                case "+" -> {
+                    System.out.print("Operate\t\t");
+                    double secondOperand = stack.pop();
+                    double firstOperand = stack.pop();
+                    stack.push(firstOperand + secondOperand);
+                    break;
+                }
+                case "^" -> {
+                    System.out.print("Operate\t\t");
+                    double secondOperand = stack.pop();
+                    double firstOperand = stack.pop();
+                    stack.push(Math.pow(firstOperand, secondOperand));
+                    break;
+                }
+                //Unary Operators
+                case "sin" -> {
+                    double operand = stack.pop();
+                    stack.push(Math.toDegrees(Math.sin(operand)));
+                }
+                case "cos" -> {
+                    double operand = stack.pop();
+                    stack.push(Math.toDegrees(Math.cos(operand)));
+                }
+                case "tan" -> {
+                    double operand = stack.pop();
+                    stack.push(Math.toDegrees(Math.tan(operand)));
+                }
+                case "cot" -> {
+                    double operand = stack.pop();
+                    stack.push(1.0 / Math.toDegrees(Math.tan(operand)));
+                }
+                case "ln" -> {
+                    double operand = stack.pop();
+                    stack.push(Math.log(operand));
+                }
+                case "log" -> {
+                    double operand = stack.pop();
+                    stack.push(Math.log(operand));
+                }
+
+                // Digits
+                default -> {
+                    System.out.print("Push\t\t");
+                    try {
+                        stack.push(Double.parseDouble(token + ""));
+                    } catch (NumberFormatException e) {
+                        return "\nError: invalid token " + token;
+                    }
+                }
+            }
+            System.out.println(stack);
+        }
+        if (stack.size() > 1) {
+            return "Error, too many operands.";
+        }
+        return "" + stack.pop();
+    }
+    static String infixToPostfix(String infix) {
+        // Function adapted from: https://rosettacode.org/wiki/Parsing/Shunting-yard_algorithm#Java
+        /* To find out the precedence, we take the index of the
+           token in the ops string and divide by 2 (rounding down).
+           This will give us: 0, 0, 1, 1, 2 */
+
+        ArrayList<String> opsPrecedence = new ArrayList<>(Arrays.asList(OPS_PRECEDENCE));
+        StringBuilder postfix = new StringBuilder();
+        Stack<Integer> s = new Stack<>();
+
+        for (String token : infix.split("\\s")) {
+            if (token.isEmpty())
+                continue;
+            int idx = opsPrecedence.indexOf(token);
+
+            // check for operator
+            if (idx != -1) {
+                if (s.isEmpty())
+                    s.push(idx);
+
+                else {
+                    while (!s.isEmpty()) {
+                        int prec2 = s.peek() / 2;
+                        int prec1 = idx / 2;
+                        if (prec2 > prec1 || (prec2 == prec1 && !token.equals("^"))) {
+                            postfix.append(opsPrecedence.get(s.pop())).append(" ");
+                        } else {
+                            break;
+                        }
+                    }
+                    s.push(idx);
+                }
+            }
+            else if (token.equals("(")) {
+                s.push(-2); // -2 stands for '('
+            }
+            else if (token.equals(")")) {
+                // until '(' on stack, pop operators.
+                while (s.peek() != -2)
+                    postfix.append(opsPrecedence.get(s.pop())).append(" ");
+                s.pop();
+            }
+            else {
+                postfix.append(token).append(' ');
+            }
+        }
+        while (!s.isEmpty())
+            postfix.append(opsPrecedence.get(s.pop())).append(' ');
+        return postfix.toString();
     }
 
     private void enableDecimal() {
@@ -492,7 +659,7 @@ public class CalculatorPanel extends JPanel {
         subtractButton.setEnabled(true);
         multiplyButton.setEnabled(true);
         divideButton.setEnabled(true);
-        equalButton.setEnabled(true);
+        //equalButton.setEnabled(true);
         expButton.setEnabled(true);
     }
 
@@ -502,7 +669,7 @@ public class CalculatorPanel extends JPanel {
         //subtractButton.setEnabled(false);  REMAINS enabled, since (-) is also unary operator
         multiplyButton.setEnabled(false);
         divideButton.setEnabled(false);
-        equalButton.setEnabled(false);     //IDK if this counts as a binary op??
+        //equalButton.setEnabled(false);     //IDK if this counts as a binary op??
         expButton.setEnabled(false);
     }
 
