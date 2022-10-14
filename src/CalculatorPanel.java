@@ -39,7 +39,7 @@ public class CalculatorPanel extends JPanel {
     // Row 5 Buttons
     final private JButton equalButton, openCurlyButton, closeCurlyButton, lnButton, logButton;
     // Row 6 buttons
-    final private JButton unaryNegativeButton, decimalButton, expButton, clearButton;
+    final private JButton unaryNegativeButton, decimalButton, expButton, clearButton, backButton;
     // Text I/O area
     private final JTextArea display = new JTextArea("0");
 
@@ -165,6 +165,9 @@ public class CalculatorPanel extends JPanel {
         clearButton = new JButton("clear");
         clearButton.setFont(bigFont);
         panel.add(clearButton);
+        backButton = new JButton("back");
+        backButton.setFont(bigFont);
+        panel.add(backButton);
 
         // Initial button states
         decimalButton.setEnabled(true);
@@ -515,6 +518,13 @@ public class CalculatorPanel extends JPanel {
             enableBinaryOps(false);
         });
 
+        backButton.addActionListener(e -> {
+            // ADD ACTION LISTSENER CODE HERE
+            // IF LAST char IS WS, DELETE LAST TWO
+            // ELSE DELETE ONE
+
+        });
+
         equalButton.addActionListener(e -> {
             display.setText(evaluate());
             currInput = "";
@@ -547,7 +557,6 @@ public class CalculatorPanel extends JPanel {
 
         // Split postfix expression into tokens based on delimiting whitespace
         for (String token : expr.split("\\s")){
-            System.out.print(token + "\t");
             switch (token) {
 
                 // Binary Operators
